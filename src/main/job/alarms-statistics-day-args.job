@@ -1,0 +1,5 @@
+#alarmsDay.job
+
+type=command
+
+command=sh ../bin/alarms-statistics-day-args.sh ${day}

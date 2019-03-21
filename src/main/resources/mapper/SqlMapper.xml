@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.umltech.mapper.SqlMapper">
+
+    <insert id="batchInsert">
+        INSERT INTO ${tableName} (did,code,level,name,total,lastTime,lastAddress,lastLon,lastLat,alarmList,updateTime)
+        VALUES
+        <foreach item="item" collection="alarmRows" separator=",">
+            (#{item.did},#{item.code},#{item.level},#{item.name},#{item.total},#{item.lastTime},#{item.lastAddress},#{item.lastLon},#{item.lastLat},#{item.alarmList},NOW())
+        </foreach>
+    </insert>
+
+    <update id="createTable">
+        CREATE TABLE IF NOT EXISTS ${tableName} (
+            `did` varchar(17) binary NOT NULL COMMENT '设备编号',
+            `code` varchar(32) NOT NULL COMMENT '内部报警编码',
+            `level` int(11) DEFAULT NULL COMMENT '报警级别',
+            `name` varchar(100) DEFAULT NULL COMMENT '内部报警名称',
+            `total` int(11) DEFAULT NULL COMMENT '相同类型报警，报警数目',
+            `lastTime` datetime DEFAULT NULL COMMENT '相同报警，最后报警时间',
+            `lastAddress` varchar(200) DEFAULT NULL COMMENT '相同报警，最后位置信息',
+            `lastLon` double DEFAULT NULL COMMENT '相同报警，最后经度',
+            `lastLat` double DEFAULT NULL COMMENT '相同报警，最后纬度',
+            `updateTime` datetime DEFAULT NULL COMMENT '最后更新时间',
+            `alarmList` longtext COMMENT 'alarmList存储内容\n[\n{\n  "startLat": 30.656304,\n  "endLat": 30.656304,\n  "startLon": 104.128904,\n  "endLon": 104.128904,\n  "startTime": "20170725101116",\n  "endTime": "20170725101116"\n},\n{}...\n]',
+        PRIMARY KEY (`did`,`code`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='当日设备报警信息';
+    </update>
+
+    <delete id="deleteAll">
+        TRUNCATE TABLE ${tableName}
+    </delete>
+</mapper>
